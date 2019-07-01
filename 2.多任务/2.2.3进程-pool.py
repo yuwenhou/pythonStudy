@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from multiprocessing import Pool
 import os, time, random
-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def worker(msg):
     t_start = time.time()
@@ -9,7 +11,7 @@ def worker(msg):
     # random.random()随机生成0~1之间的浮点数
     time.sleep(random.random() * 2)
     t_stop = time.time()
-    print(msg, "执行完毕，耗时%0.2f" % (t_stop - t_start))
+    print(str(msg)+"执行完毕，耗时%0.2f" % (t_stop - t_start))
 
 
 def main():
