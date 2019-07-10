@@ -3,6 +3,7 @@ from collections import Iterable
 from collections import Iterator
 import time
 
+
 class Classmate(object):
     def __init__(self):
         self.names = list()
@@ -32,6 +33,7 @@ class ClassIterator(object):
         else:
             raise StopIteration
 
+
 classmate = Classmate()
 classmate.add("张三")
 classmate.add("李四")
@@ -44,5 +46,3 @@ classmate.add("王二")
 for name in classmate:
     print(name)
     time.sleep(1)
-
-
