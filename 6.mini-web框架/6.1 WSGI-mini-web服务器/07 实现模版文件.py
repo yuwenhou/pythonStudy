@@ -1,7 +1,7 @@
 import re
 import socket
 import multiprocessing
-import mini_frame05
+import dynamic.mini_frame
 
 
 class WSGIServer(object):
@@ -39,7 +39,7 @@ class WSGIServer(object):
         # 2.1 如果请求资源不是以。py结尾，那么就认为是静态资源（html/css/js/png/jpg等）
         if not file_name.endswith(".py"):
             try:
-                f = open("../html/" + file_name, "rb")
+                f = open("./static/" + file_name, "rb")
             except:
                 response = "HTTP/1.1 404 NOT FOUND\r\n"
                 response += "\r\n"
@@ -64,7 +64,9 @@ class WSGIServer(object):
             # body = "hahahaha%s"% time.ctime()
 
             env = dict()
-            body = mini_frame05.application(env, self.set_response_header)
+            env['PATH_INFO'] = file_name
+
+            body = dynamic.mini_frame.application(env, self.set_response_header)
             # print("-----------保驾护航----------")
             # print(body)
             # print("-----------保驾护航----------")

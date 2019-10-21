@@ -1,7 +1,7 @@
 import re
 import socket
 import multiprocessing
-import mini_frame05
+import mini_frame06
 
 
 class WSGIServer(object):
@@ -64,7 +64,9 @@ class WSGIServer(object):
             # body = "hahahaha%s"% time.ctime()
 
             env = dict()
-            body = mini_frame05.application(env, self.set_response_header)
+            env['PATH_INFO'] = file_name
+
+            body = mini_frame06.application(env, self.set_response_header)
             # print("-----------保驾护航----------")
             # print(body)
             # print("-----------保驾护航----------")
