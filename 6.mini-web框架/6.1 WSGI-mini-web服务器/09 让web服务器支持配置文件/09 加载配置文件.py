@@ -6,7 +6,7 @@ import sys
 
 class WSGIServer(object):
 
-    def __init__(self,port,app):
+    def __init__(self,port,app,static_path):
         # 1. 创建套接字
         self.tcp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # 设置当服务器先close之后资源能够立即释放，保证下次程序在使用的时候可以立即运行
@@ -18,6 +18,7 @@ class WSGIServer(object):
         # 3. 变为监听套接字
         self.tcp_server_socket.listen(128)
         self.application = app
+        self.static_path = static_path
 
     def service_client(self, new_socket):
         """为这个客户端返回数据"""
@@ -40,7 +41,7 @@ class WSGIServer(object):
         # 2.1 如果请求资源不是以。py结尾，那么就认为是静态资源（html/css/js/png/jpg等）
         if not file_name.endswith(".py"):
             try:
-                f = open("./static/" + file_name, "rb")
+                f = open(self.static_path +"/" + file_name, "rb")
             except:
                 response = "HTTP/1.1 404 NOT FOUND\r\n"
                 response += "\r\n"
@@ -133,13 +134,20 @@ def main():
         print("python3 xxxx.py 7890 mini_frame:application")
         return
 
-    sys.path.append("./dynamic")
+    with open('./web_server.conf') as f:
+        conf_info = eval(f.read())
+    # {
+    #     "static_path": "./static",
+    #     "dynamic_path": "./dynamic"
+    # }
+
+    sys.path.append(conf_info["dynamic_path"])
     # import frame_name ---> 找frame_name.py
     frame = __import__(frame_name)   # 通过import来找到变量里存储的模块名
     app = getattr(frame, app_name) # 找到函数名
 
 
-    wsgi_server = WSGIServer(port,app)
+    wsgi_server = WSGIServer(port,app,conf_info["static_path"])
     wsgi_server.run_forever()
 
 
