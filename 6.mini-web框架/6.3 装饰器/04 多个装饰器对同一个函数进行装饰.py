@@ -3,13 +3,13 @@ def add_qx(func):
     def call_func(*args,**kwargs):
         print("----add-----")
         # func(args, kwargs) #相当于传递了2个参数：1个元组，1个字典
-        return func(*args,**kwargs) # 拆包
+        return "<td>"+func(*args,**kwargs) +"</td>"# 拆包
     return call_func
 
 def set_func(func):
     def call_func(*args, **kwargs):
         print("----set_func-----")
-        return func(*args,**kwargs) # 拆包
+        return "<h1>"+func(*args,**kwargs) +"</h1>"# 拆包
     return call_func
 
 @add_qx
