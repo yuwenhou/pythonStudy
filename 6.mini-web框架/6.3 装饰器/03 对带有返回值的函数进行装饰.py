@@ -19,6 +19,7 @@ def test1(num,*args,**kwargs):
     print("-------test1-------", kwargs)
     return 'ok'
 
+
 ret = test1(100,100,100,1001,123,aa=1,bb=2)
 print(ret)
 
