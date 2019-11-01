@@ -1,6 +1,7 @@
 import re
+import urllib.parse
 from pymysql import connect
-
+import logging
 """
 URL_FUNC_DICT = {
     "/index.html": index,
@@ -185,6 +186,53 @@ def delete_focus(ret):
     return "取消关注(%s)成功 ...." % stock_code
 
 
+@route(r"/update/(\d+)\.html")
+def show_update_page(ret):
+    """显示修改的那个页面"""
+    #1. 获取股票代码
+    stock_code = ret.group(1)
+
+    # 2. 打开模版
+    with open("./templates/update.html") as f:
+        content = f.read()
+
+    # 3. 根据股票代码查询相关的备注信息
+    conn = connect(host='localhost', port=3306, user='root', password='12345678', database='stock_db', charset='utf8')
+    # 获得Cursor对象
+    cs = conn.cursor()
+    sql = """select f.note_info from focus as f inner join info as i on i.id=f.info_id where i.code=%s;"""
+    cs.execute(sql, (stock_code,))
+    stock_infos = cs.fetchone()
+    note_info = stock_infos[0] #获取这只股票的对应备注信息
+    cs.close()
+    conn.close()
+    print(note_info)
+    print(content)
+    content = re.sub(r"\{%note_info%\}", note_info, content)
+    content = re.sub(r"\{%code%\}", stock_code, content)
+
+    return content
+
+
+@route(r"/update/(\d+)/(.*)\.html")
+def save_update_page(ret):
+    """保存修改的信息"""
+    stock_code = ret.group(1)
+    comment = ret.group(2)
+    comment = urllib.parse.unquote(comment)
+
+    conn = connect(host='localhost', port=3306,user='root',password='12345678',database='stock_db',charset='utf8')
+    cs = conn.cursor()
+    sql = """update focus set note_info=%s where info_id=(select id from info where code=%s);"""
+    cs.execute(sql, (comment, stock_code))
+    conn.commit()
+    cs.close()
+    conn.close()
+
+    return "修改成功。。。"
+
+
+
 def application(env, start_response):
     start_response('200 OK', [('Content-Type', 'text/html;charset=utf-8')])
 
@@ -200,6 +248,14 @@ def application(env, start_response):
         return 'Hello World! 我爱你中国....'
     """
 
+    logging.basicConfig(level=logging.WARNING,
+                        filename='./log.txt',
+                        filemode='w',
+                        format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
+
+    logging.info("访问的是,%s"%file_name)
+
+
     try:
         # func = URL_FUNC_DICT[file_name]
         # return func()
@@ -214,6 +270,7 @@ def application(env, start_response):
             if ret:
                 return func(ret)
         else:
+            logging.warning("没有对应的函数")
             return "请求的url(%s)没有对应的函数...." % file_name
 
 
