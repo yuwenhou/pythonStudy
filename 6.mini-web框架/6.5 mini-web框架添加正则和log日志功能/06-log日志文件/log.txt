@@ -1,0 +1,7 @@
+2019-10-31 13:45:49,784 - test.py[line:10] - WARNING: 这是 loggging a warning message
+2019-10-31 13:45:49,784 - test.py[line:11] - ERROR: 这是 an loggging error message
+2019-10-31 13:45:49,784 - test.py[line:12] - CRITICAL: 这是 loggging critical message
+2019-10-31 13:51:04,824 - test.py[line:27] - INFO: 这是 logger info message
+2019-10-31 13:51:04,825 - test.py[line:28] - WARNING: 这是 logger warning message
+2019-10-31 13:51:04,825 - test.py[line:29] - ERROR: 这是 logger error message
+2019-10-31 13:51:04,825 - test.py[line:30] - CRITICAL: 这是 logger critical message
